@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/edersohe/zflogger"
-	"github.com/gofiber/fiber"
+	"github.com/DIMO-Network/zflogger"
+	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog"
 )
 
@@ -15,14 +15,14 @@ func main() {
 
 	app.Use(zflogger.Middleware(log, nil))
 
-	app.Get("/", func(c *fiber.Ctx) {
-		c.Send("Hello, World!")
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
 	})
 
-	app.Get("/error", func(c *fiber.Ctx) {
+	app.Get("/error", func(c *fiber.Ctx) error {
 		a := 0
-		c.JSON(1 / a)
+		return c.JSON(1 / a)
 	})
 
-	log.Fatal().Err(app.Listen(3000)).Str("tag", "server").Send()
+	log.Fatal().Err(app.Listen(":3000")).Str("tag", "server").Send()
 }
