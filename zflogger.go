@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
@@ -88,7 +88,7 @@ func Middleware(log zerolog.Logger, filter func(*fiber.Ctx) bool) func(*fiber.Ct
 				})
 			}
 
-			fields.StatusCode = c.Fasthttp.Response.StatusCode()
+			fields.StatusCode = c.Response().StatusCode()
 			fields.Latency = time.Since(start).Seconds()
 
 			switch {
