@@ -45,15 +45,14 @@ func (lf *logFields) MarshalZerologObject(e *zerolog.Event) {
 	}
 }
 
-//Middleware requestid + logger + recover for request traceability
-func Middleware(log zerolog.Logger, filter func(*fiber.Ctx) bool) func(*fiber.Ctx) {
-	return func(c *fiber.Ctx) {
+// New requestid + logger + recover for request traceability
+func New(log zerolog.Logger, filter func(*fiber.Ctx) bool) fiber.Handler {
+	return func(c *fiber.Ctx) (err error) {
 		if filter != nil && filter(c) {
-			c.Next()
-			return
+			return c.Next()
 		}
 
-		start := time.Now()
+		start := time.Now() // we may not care about this.
 
 		rid := c.Get(fiber.HeaderXRequestID)
 		if rid == "" {
@@ -101,14 +100,14 @@ func Middleware(log zerolog.Logger, filter func(*fiber.Ctx) bool) func(*fiber.Ct
 			case fields.StatusCode >= 300:
 				log.Warn().EmbedObject(fields).Msg("redirect")
 			case fields.StatusCode >= 200:
-				log.Info().EmbedObject(fields).Msg("success")
+				log.Debug().EmbedObject(fields).Msg("success")
 			case fields.StatusCode >= 100:
-				log.Info().EmbedObject(fields).Msg("informative")
+				log.Debug().EmbedObject(fields).Msg("informative")
 			default:
 				log.Warn().EmbedObject(fields).Msg("unknown status")
 			}
 		}()
 
-		c.Next()
+		return c.Next()
 	}
 }

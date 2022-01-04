@@ -13,7 +13,7 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use(zflogger.Middleware(log, nil))
+	app.Use(zflogger.New(log, nil))
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
