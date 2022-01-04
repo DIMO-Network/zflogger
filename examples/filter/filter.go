@@ -9,7 +9,7 @@ import (
 )
 
 // this filter apply logger middleware when the context path is "/error",
-// else the zflogger.Middleware are skipped and the flow continue
+// else the zflogger.New are skipped and the flow continue
 func filter(c *fiber.Ctx) bool {
 	return c.Path() != "/error"
 }
@@ -19,7 +19,7 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use(zflogger.Middleware(log, filter))
+	app.Use(zflogger.New(log, filter))
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
